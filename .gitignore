@@ -1,0 +1,13 @@
+# secrets / local config
+.env
+.env.*
+!.env.example
+# python
+__pycache__/
+.venv/
+.pytest_cache/
+backend/data/
+# node
+node_modules/
+frontend/dist/
+upload.tar.gz

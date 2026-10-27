@@ -1,0 +1,20 @@
+# systemd service: keeps the FastAPI backend running on EC2 and restarts it after crashes/reboots.
+# Install:  sudo cp deploy/protein-api.service /etc/systemd/system/
+#           sudo systemctl daemon-reload && sudo systemctl enable --now protein-api
+[Unit]
+Description=Protein Prediction FastAPI backend
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=ec2-user
+WorkingDirectory=/home/ec2-user/protein-prediction-cloud/backend
+# Settings are read from backend/.env by the app. No AWS keys: boto3 uses the EC2 IAM role.
+# Option A (browser talks to port 8000 directly): --host 0.0.0.0
+# Option B (nginx in front):                       change to --host 127.0.0.1
+ExecStart=/home/ec2-user/protein-prediction-cloud/backend/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
